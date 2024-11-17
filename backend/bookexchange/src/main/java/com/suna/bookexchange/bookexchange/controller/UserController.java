@@ -1,7 +1,6 @@
 package com.suna.bookexchange.bookexchange.controller;
 
 import com.suna.bookexchange.bookexchange.model.User;
-import com.suna.bookexchange.bookexchange.model.dto.UserCreateDTO;
 import com.suna.bookexchange.bookexchange.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -37,8 +36,6 @@ public class UserController {
         private String username;
         private String email;
         private Date createdOn;
-
-        // Getters and Setters
 
         public String getId() {
             return id;
