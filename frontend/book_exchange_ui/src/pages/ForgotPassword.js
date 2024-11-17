@@ -1,47 +1,41 @@
-// src/pages/Login.js
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { 
     Container, 
     TextField, 
     Button, 
     Typography, 
     Box, 
-    Alert, 
-    Link as MuiLink 
+    Alert 
 } from '@mui/material';
 
-function Login({ onLogin }) {
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
+function ForgotPassword() {
+    const [email, setEmail] = useState('');
     const [error, setError] = useState(null);
+    const [success, setSuccess] = useState(null);
     const navigate = useNavigate();
 
-    const handleLogin = async (e) => {
+    const handleForgotPassword = async (e) => {
         e.preventDefault();
 
         try {
-            const response = await fetch('http://localhost:8080/auth/login', {
+            const response = await fetch('http://localhost:8080/auth/forgot-password', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ username, password }),
+                body: JSON.stringify({ email }),
             });
 
             if (!response.ok) {
-                throw new Error('Login failed');
+                throw new Error('Failed to send reset email');
             }
 
-            const data = await response.json();
-            // Store the JWT token in localStorage
-            // localStorage.setItem('authToken', data.token);
-            onLogin(data.token, username);
-
-            // Redirect to account page or wherever needed
-            navigate('/account');
+            setSuccess('Password reset email sent successfully');
+            setError(null);
         } catch (error) {
-            setError('Invalid credentials, please try again.');
+            setError('Failed to send reset email, please try again.');
+            setSuccess(null);
         }
     };
 
@@ -56,7 +50,7 @@ function Login({ onLogin }) {
                 alignItems: 'center',
                 justifyContent: 'center',
             }}
-            >
+        >
             <Container maxWidth="xs" sx={{ mt: 8 }}>
                 <Box 
                     sx={{
@@ -70,31 +64,27 @@ function Login({ onLogin }) {
                     }}
                 >
                     <Typography variant="h4" gutterBottom>
-                        Login
+                        Forgot Password
                     </Typography>
-                    <form onSubmit={handleLogin} style={{ width: '100%' }}>
+                    <form onSubmit={handleForgotPassword} style={{ width: '100%' }}>
                         <TextField
-                            label="Username"
+                            label="Email"
                             variant="outlined"
+                            type="email"
                             fullWidth
                             margin="normal"
-                            value={username}
-                            onChange={(e) => setUsername(e.target.value)}
-                            required
-                        />
-                        <TextField
-                            label="Password"
-                            variant="outlined"
-                            type="password"
-                            fullWidth
-                            margin="normal"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
                             required
                         />
                         {error && (
                             <Alert severity="error" sx={{ mt: 2 }}>
                                 {error}
+                            </Alert>
+                        )}
+                        {success && (
+                            <Alert severity="success" sx={{ mt: 2 }}>
+                                {success}
                             </Alert>
                         )}
                         <Button
@@ -104,24 +94,13 @@ function Login({ onLogin }) {
                             fullWidth
                             sx={{ mt: 3 }}
                         >
-                            Login
+                            Send Reset Email
                         </Button>
                     </form>
-                    <Typography variant="body2" sx={{ mt: 2 }}>
-                        Don't have an account?{' '}
-                        <MuiLink component={Link} to="/create-account">
-                            Create Account
-                        </MuiLink>
-                    </Typography>
-                    <Typography variant="body2" sx={{ mt: 2 }}>
-                        <MuiLink component={Link} to="/forgot-password">
-                            Forgot Password?
-                        </MuiLink>
-                    </Typography>
                 </Box>
             </Container>
         </Box>
     );
 }
 
-export default Login;
+export default ForgotPassword;

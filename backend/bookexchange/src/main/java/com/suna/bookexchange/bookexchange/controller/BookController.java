@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/book-bridge/books")
 public class BookController {
@@ -58,5 +60,10 @@ public class BookController {
     public ResponseEntity<Void> deleteBook(@PathVariable String id) {
         bookService.deleteBook(id);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/lender/{lenderId}")
+    public List<Book> getBooksByLenderId(@PathVariable String lenderId) {
+        return bookService.getBooksByLenderId(lenderId);
     }
 }

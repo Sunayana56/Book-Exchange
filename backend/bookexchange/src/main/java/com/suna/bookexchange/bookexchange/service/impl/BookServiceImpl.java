@@ -167,6 +167,11 @@ public class BookServiceImpl implements BookService {
                 .orElseThrow(() -> new ResourceNotFoundException("Book not found with id: " + id));
         bookRepository.delete(existingBook);
     }
+
+    @Override
+    public List<Book> getBooksByLenderId(String lenderId) {
+        return bookRepository.findBookByLenderId(lenderId);
+    }
 }
 
 

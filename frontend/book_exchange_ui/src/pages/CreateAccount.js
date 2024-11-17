@@ -1,4 +1,3 @@
-// src/pages/CreateAccount.js
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
@@ -27,6 +26,17 @@ function CreateAccount() {
         setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
+    const validateEmail = (email) => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    };
+
+    const validatePassword = (password) => {
+        // Password must be at least 8 characters long and contain at least one number and one special character
+        const passwordRegex = /^(?=.*[0-9])(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
+        return passwordRegex.test(password);
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -35,6 +45,19 @@ function CreateAccount() {
             setError('All fields are required!');
             return;
         }
+
+        // Email validation
+        if (!validateEmail(formData.email)) {
+            setError('Invalid email format');
+            return;
+        }
+
+        // Password validation
+        if (!validatePassword(formData.password)) {
+            setError('Password must be at least 8 characters long and contain at least one number and one special character');
+            return;
+        }
+
         // Validation: Password and Confirm Password check
         if (formData.password !== formData.confirmPassword) {
             setError('Passwords do not match');

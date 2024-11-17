@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Typography, Card, CardMedia, CardContent, Button, Divider } from '@mui/material';
+import { Box, Typography, Card, CardMedia, CardContent, Button, Divider, Chip } from '@mui/material';
 import { useParams } from 'react-router-dom';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 function BookDetailPage() {
-    const { id } = useParams();  // Extract the book ID from the URL
+    const { id } = useParams();  
     const [book, setBook] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    // Fetch book details on component mount
     useEffect(() => {
         const fetchBookDetails = async () => {
             try {
@@ -18,16 +17,16 @@ function BookDetailPage() {
                     throw new Error(`Error: ${response.statusText}`);
                 }
                 const data = await response.json();
-                setBook(data);  // Set the fetched book details
+                setBook(data);  
                 setLoading(false);
             } catch (err) {
-                setError(err.message);  // Handle any errors
+                setError(err.message);  
                 setLoading(false);
             }
         };
 
         fetchBookDetails();
-    }, [id]);  // Dependency on bookId to re-fetch when it changes
+    }, [id]);  
 
     if (loading) {
         return <Typography variant="h6">Loading...</Typography>;
@@ -72,6 +71,11 @@ function BookDetailPage() {
                             alt={book.title}
                         />
                         <CardContent>
+                            <Chip
+                                label={book.available ? 'Available' : 'Unavailable'}
+                                color={book.available ? 'success' : 'error'}
+                                sx={{ mt: 2 }}
+                            />
                             <Typography variant="h5">{book.title}</Typography>
                             <Typography variant="body1"><strong>Author:</strong> {book.author}</Typography>
                             <Typography variant="body1"><strong>Publisher:</strong> {book.publisher}</Typography>
@@ -82,7 +86,7 @@ function BookDetailPage() {
                                 <Typography variant="body1" sx={{ marginRight: 1 }}><strong>Description:</strong></Typography>
                                 <Typography variant="body2">{book.description}</Typography>
                             </Box>
-                            
+                            <Typography variant="body1"><strong>Location:</strong> {book.location}</Typography>
                             <Button  variant="contained" 
                                     color="primary" 
                                     sx={{ 

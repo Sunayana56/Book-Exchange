@@ -192,7 +192,10 @@ function HomePage() {
                             <MenuItem value="Fiction">Fiction</MenuItem>
                             <MenuItem value="Non-Fiction">Non-Fiction</MenuItem>
                             <MenuItem value="Fantasy">Fantasy</MenuItem>
-                            <MenuItem value="Science">Science</MenuItem>
+                            <MenuItem value="Adventure">Adventure</MenuItem>
+                            <MenuItem value="Philosophy">Philosophy</MenuItem>
+                            <MenuItem value="Drama">Drama</MenuItem>
+                            <MenuItem value="Science Fiction">Science Fiction</MenuItem>
                         </Select>
                     </FormControl>
 

@@ -7,6 +7,7 @@ import AccountPage from './pages/Account';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import BookDetailPage from './pages/BookDetailPage';
+import ForgotPassword from './pages/ForgotPassword';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -48,6 +49,7 @@ function App() {
         />
         <Route path="/book-detail/:id" element={<BookDetailPage />} />
         <Route path="/account" element={isLoggedIn ? <AccountPage /> : <Navigate to="/login" />} />
+        <Route path="/forgot-password" element={<ForgotPassword/>} />
       </Routes>
     </Router>
   );

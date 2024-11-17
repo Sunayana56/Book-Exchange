@@ -15,6 +15,9 @@ import {
     TextField,
     DialogActions,
     Alert,
+    Checkbox,
+    FormControlLabel,
+    Chip,
 } from '@mui/material';
 import { Edit, Delete, Add } from '@mui/icons-material';
 
@@ -24,12 +27,23 @@ function AccountPage() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [modalOpen, setModalOpen] = useState(false);
-    const [bookDetails, setBookDetails] = useState({ title: '', author: '' });
+    const [bookDetails, setBookDetails] = useState({
+        title: '',
+        author: '',
+        publisher: '',
+        genre: '',
+        language: '',
+        publishYear: '',
+        description: '',
+        imagePath: '',
+        location: '',
+        isAvailable: false,
+        lenderId: ''
+    });
     const [editingBookId, setEditingBookId] = useState(null);
 
     const username = localStorage.getItem('username'); // Get username from localStorage
 
-    // Fetch user details
     useEffect(() => {
         if (username) {
             const fetchUserDetails = async () => {
@@ -39,11 +53,11 @@ function AccountPage() {
                             'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
                         },
                     });
-
+    
                     if (!response.ok) {
                         throw new Error('Failed to fetch user details');
                     }
-
+    
                     const data = await response.json();
                     setUserDetails(data);
                 } catch (err) {
@@ -52,18 +66,17 @@ function AccountPage() {
                     setLoading(false);
                 }
             };
-
+    
             fetchUserDetails();
         } else {
             setError('No username found');
             setLoading(false);
         }
-    }, [username]);
-
-    // Fetch books added by the user
+    }, [username]); 
+    
     const fetchBooks = async () => {
         try {
-            const response = await fetch(`http://localhost:8080/api/books/user/${username}`, {
+            const response = await fetch(`http://localhost:8080/book-bridge/books/lender/${userDetails.id}`, {
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
                 },
@@ -79,30 +92,56 @@ function AccountPage() {
             setError('Failed to fetch books');
         }
     };
-
+   
     useEffect(() => {
-        if (username) fetchBooks();
-    }, [username]);
+        if (userDetails?.id) {
+            fetchBooks();
+        }
+    }, [userDetails]); 
 
-    // Handle add/edit book modal
     const handleModalOpen = (book = null) => {
-        setBookDetails(book || { title: '', author: '' });
+        setBookDetails(book || {
+            title: '',
+            author: '',
+            publisher: '',
+            genre: '',
+            language: '',
+            publishYear: '',
+            description: '',
+            imagePath: '',
+            location: '',
+            isAvailable: false,
+            lenderId: ''
+        });
         setEditingBookId(book?.id || null);
         setModalOpen(true);
     };
 
     const handleModalClose = () => {
         setModalOpen(false);
-        setBookDetails({ title: '', author: '' });
+        setBookDetails({
+            title: '',
+            author: '',
+            publisher: '',
+            genre: '',
+            language: '',
+            publishYear: '',
+            description: '',
+            imagePath: '',
+            location: '',
+            isAvailable: false,
+            lenderId: ''
+        });
         setEditingBookId(null);
     };
 
     const handleBookSave = async () => {
         const url = editingBookId
-            ? `http://localhost:8080/api/books/${editingBookId}`
-            : `http://localhost:8080/api/books`;
+            ? `http://localhost:8080/book-bridge/books/${editingBookId}`
+            : `http://localhost:8080/book-bridge/books`;
 
         const method = editingBookId ? 'PUT' : 'POST';
+        bookDetails.lenderId = userDetails.id;
 
         try {
             const response = await fetch(url, {
@@ -128,7 +167,7 @@ function AccountPage() {
     // Handle delete book
     const handleDeleteBook = async (bookId) => {
         try {
-            const response = await fetch(`http://localhost:8080/api/books/${bookId}`, {
+            const response = await fetch(`http://localhost:8080/book-bridge/books/${bookId}`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
@@ -181,9 +220,9 @@ function AccountPage() {
             </Button>
 
             {/* Books Section */}
-            <Box sx={{ mt: 4, width: '100%' }}>
+            <Box sx={{ mt: 4, width: '50%' }}>
                 <Typography variant="h5" gutterBottom>
-                    Your Books
+                    Your Listed Books
                 </Typography>
                 <List>
                     {books.map((book) => (
@@ -203,6 +242,11 @@ function AccountPage() {
                             <ListItemText
                                 primary={book.title}
                                 secondary={`Author: ${book.author}`}
+                            />
+                            <Chip
+                                label={book.available ? 'Available' : 'Unavailable'}
+                                color={book.available ? 'success' : 'error'}
+                                sx={{ ml: 2, marginRight: 7 }}
                             />
                         </ListItem>
                     ))}
@@ -237,6 +281,72 @@ function AccountPage() {
                         margin="normal"
                         value={bookDetails.author}
                         onChange={(e) => setBookDetails({ ...bookDetails, author: e.target.value })}
+                    />
+                    <TextField
+                        label="Publisher"
+                        variant="outlined"
+                        fullWidth
+                        margin="normal"
+                        value={bookDetails.publisher}
+                        onChange={(e) => setBookDetails({ ...bookDetails, publisher: e.target.value })}
+                    />
+                    <TextField
+                        label="Genre"
+                        variant="outlined"
+                        fullWidth
+                        margin="normal"
+                        value={bookDetails.genre}
+                        onChange={(e) => setBookDetails({ ...bookDetails, genre: e.target.value })}
+                    />
+                    <TextField
+                        label="Language"
+                        variant="outlined"
+                        fullWidth
+                        margin="normal"
+                        value={bookDetails.language}
+                        onChange={(e) => setBookDetails({ ...bookDetails, language: e.target.value })}
+                    />
+                    <TextField
+                        label="Publish Year"
+                        variant="outlined"
+                        fullWidth
+                        margin="normal"
+                        type="number"
+                        value={bookDetails.publishYear}
+                        onChange={(e) => setBookDetails({ ...bookDetails, publishYear: e.target.value })}
+                    />
+                    <TextField
+                        label="Description"
+                        variant="outlined"
+                        fullWidth
+                        margin="normal"
+                        value={bookDetails.description}
+                        onChange={(e) => setBookDetails({ ...bookDetails, description: e.target.value })}
+                    />
+                    <TextField
+                        label="Image Path"
+                        variant="outlined"
+                        fullWidth
+                        margin="normal"
+                        value={bookDetails.imagePath}
+                        onChange={(e) => setBookDetails({ ...bookDetails, imagePath: e.target.value })}
+                    />
+                    <TextField
+                        label="Location"
+                        variant="outlined"
+                        fullWidth
+                        margin="normal"
+                        value={bookDetails.location}
+                        onChange={(e) => setBookDetails({ ...bookDetails, location: e.target.value })}
+                    />
+                    <FormControlLabel
+                        control={
+                            <Checkbox
+                                checked={bookDetails.isAvailable}
+                                onChange={(e) => setBookDetails({ ...bookDetails, isAvailable: e.target.checked })}
+                            />
+                        }
+                        label="Is Available"
                     />
                 </DialogContent>
                 <DialogActions>
