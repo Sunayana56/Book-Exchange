@@ -1,2 +1,2 @@
-# book-exchange
+# Book Bridge - A Book Exchange Platform
  
